@@ -11,7 +11,7 @@ from sklearn.metrics import (mean_squared_error, mean_absolute_error, r2_score,
 
 def linear_regression():
     # --- 1. Load the Data ---
-    data_file = os.path.join("..", "..", "data", "cars.csv")
+    data_file = os.path.join("../..", "..", "data", "cars.csv")
     df = pd.read_csv(data_file)
 
     # --- 2. Features (X) & Target (y) ---
@@ -23,7 +23,7 @@ def linear_regression():
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     # --- 4. Build and Train the Model ---
-    # This like instantiating an object in Java: LinearRegression model = new LinearRegression();
+    # This is like instantiating an object in Java: LinearRegression model = new LinearRegression();
     model = LinearRegression()
 
     # fit calculates the math to draw the best possible line through the training data.
