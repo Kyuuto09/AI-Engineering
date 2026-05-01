@@ -7,7 +7,7 @@ from sklearn.metrics import mean_absolute_percentage_error
 
 
 def predict_electricity_consumption():
-    # --- 1. Load the Data  ---
+    # --- Data  ---
     current_dir = os.path.dirname(os.path.abspath(__file__))
 
     data_file = os.path.join(current_dir, "../..", "..", "data", "energy_usage.csv")
@@ -17,7 +17,7 @@ def predict_electricity_consumption():
     X = df[['temperature', 'humidity', 'hour', 'is_weekend']]
     y = df['consumption']
 
-    # --- 3.  Train/Test (80% Train, 20% Test) ---
+    # --- 3. Train/Test (80% Train, 20% Test) ---
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     # --- 4. Build and Train the Model ---
