@@ -5,6 +5,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 import numpy as np
 
+# ! fix because i wanted to randomize guesses, instead of just sample = X_test[0].reshape(1, -1)...
+# FIX 1: Set the random seed so the AI doesn't get a "Bad Brain" starting point
+tf.keras.utils.set_random_seed(42)
+
 
 def classify_wine():
     # Wine data set
@@ -12,7 +16,7 @@ def classify_wine():
     X = wine_data.data
     y = wine_data.target
 
-    print("Feature sample (normalized):", X[0][:4], "...")
+    print("Feature sample (raw):", X[0][:4], "...")
 
     # --- Normalize features ---
     scaler = StandardScaler()
@@ -47,7 +51,8 @@ def classify_wine():
 
     # --- Train ---
     print("\n--- Starting Training ---")
-    model.fit(X_train, y_train, epochs=50, batch_size=8, verbose=1)
+    # FIX 2: 100 epochs to give the AI enough time to learn
+    model.fit(X_train, y_train, epochs=100, batch_size=8, verbose=1)
 
     # --- Evaluate ---
     print("\n--- Evaluating on Test Data ---")
@@ -55,22 +60,21 @@ def classify_wine():
     print(f"Test Accuracy: {accuracy * 100:.2f}%")
 
     # --- Prediction ---
-    print("\n--- Making a Prediction ---")
+    print("\n--- Multiple Predictions ---")
 
-    # Taking the first wine from our test set
-    sample = X_test[0].reshape(
-        1, -1
-    )  # Reshape is needed because TF expects a batch (even of 1)
-    actual_class = y_test[0]
+    for i in range(5):
+        sample = X_test[i].reshape(1, -1)
+        actual_class = y_test[i]
 
-    # "logits" (raw, unscaled math scores)
-    pred_logits = model.predict(sample)
-    print("Raw Logits:", pred_logits)
+        # Predict
+        pred_logits = model.predict(sample, verbose=0)
+        pred_class = np.argmax(pred_logits, axis=1)[0]
 
-    # np.argmax helps to find the index of the highest score
-    pred_class = np.argmax(pred_logits, axis=1)[0]
-    print(f"Predicted class: {pred_class} -> {wine_data.target_names[pred_class]}")
-    print(f"Actual class: {actual_class} -> {wine_data.target_names[actual_class]}")
+        # FIX 3: Moved the raw logits print statement INSIDE the loop so i can see the math for every wine!
+        print(f"\nWine {i} Raw Logits: {pred_logits[0]}")
+        print(
+            f"Wine {i}: Predicted -> {wine_data.target_names[pred_class]} | Actual -> {wine_data.target_names[actual_class]}"
+        )
 
 
 if __name__ == "__main__":
