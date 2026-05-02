@@ -3,9 +3,10 @@ from tensorflow.keras import layers
 from sklearn.datasets import load_wine
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import classification_report  # <-- FIX 1: Added missing import!
+from sklearn.metrics import classification_report
 import numpy as np
 
+# ! few fixes were implemented
 # FIX 2: Set the random seed so the AI doesn't get a "Bad Brain" starting point
 tf.keras.utils.set_random_seed(42)
 
