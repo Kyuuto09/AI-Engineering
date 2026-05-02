@@ -3,10 +3,10 @@ from tensorflow.keras import layers
 from sklearn.datasets import load_wine
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import classification_report  # <-- FIX 1: Added missing import!
 import numpy as np
 
-# ! fix because i wanted to randomize guesses, instead of just sample = X_test[0].reshape(1, -1)...
-# FIX 1: Set the random seed so the AI doesn't get a "Bad Brain" starting point
+# FIX 2: Set the random seed so the AI doesn't get a "Bad Brain" starting point
 tf.keras.utils.set_random_seed(42)
 
 
@@ -51,7 +51,7 @@ def classify_wine():
 
     # --- Train ---
     print("\n--- Starting Training ---")
-    # FIX 2: 100 epochs to give the AI enough time to learn
+    # 100 epochs to give the AI enough time to learn
     model.fit(X_train, y_train, epochs=100, batch_size=8, verbose=1)
 
     # --- Evaluate ---
@@ -59,21 +59,36 @@ def classify_wine():
     loss, accuracy = model.evaluate(X_test, y_test)
     print(f"Test Accuracy: {accuracy * 100:.2f}%")
 
-    # --- Prediction ---
-    print("\n--- Multiple Predictions ---")
+    # --- Classification Report ---
+    all_pred_logits = model.predict(X_test, verbose=0)
+    all_pred_classes = np.argmax(all_pred_logits, axis=1)
 
-    for i in range(5):
-        sample = X_test[i].reshape(1, -1)
-        actual_class = y_test[i]
+    print("\nClassification Report:")
+    print(
+        classification_report(
+            y_test, all_pred_classes, target_names=wine_data.target_names
+        )
+    )
+
+    # --- Prediction ---
+    print("\n--- Multiple Random Predictions ---")
+
+    # FIX 3: Randomize the guesses!
+    random_indices = np.random.choice(len(X_test), size=5, replace=False)
+
+    for i, random_index in enumerate(random_indices):
+        sample = X_test[random_index].reshape(1, -1)
+        actual_class = y_test[random_index]
 
         # Predict
         pred_logits = model.predict(sample, verbose=0)
-        pred_class = np.argmax(pred_logits, axis=1)[0]
+        pred_class = np.argmax(pred_logits, axis=1)[0]  # argmax finds index
 
-        # FIX 3: Moved the raw logits print statement INSIDE the loop so i can see the math for every wine!
-        print(f"\nWine {i} Raw Logits: {pred_logits[0]}")
         print(
-            f"Wine {i}: Predicted -> {wine_data.target_names[pred_class]} | Actual -> {wine_data.target_names[actual_class]}"
+            f"\nRandom Wine {i+1} (Index {random_index}) Raw Logits: {pred_logits[0]}"
+        )
+        print(
+            f"Wine {i+1}: Predicted -> {wine_data.target_names[pred_class]} | Actual -> {wine_data.target_names[actual_class]}"
         )
 
 
