@@ -4,6 +4,8 @@ import os
 import re
 from collections import Counter
 
+import matplotlib.pyplot as plt
+
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer, WordNetLemmatizer
@@ -85,6 +87,19 @@ def main():
 
     print("Sentiment counts:", dict(sentiment_counts))
     print(f"Saved JSON: {output_path}")
+
+    # Plot sentiment counts
+    labels = ["negative", "neutral", "positive"]
+    counts = [sentiment_counts.get(label, 0) for label in labels]
+
+    plt.figure(figsize=(6, 4))
+    plt.bar(labels, counts, color=["#d9534f", "#f0ad4e", "#5cb85c"])
+    plt.title("Trust pilot: jerseywatch.com")
+    plt.xlabel("Sentiment")
+    plt.ylabel("Number of Reviews")
+    plt.tight_layout()
+    plt.savefig("review_graph_jerseywatch.com.png")
+    plt.show()
 
 
 if __name__ == "__main__":
