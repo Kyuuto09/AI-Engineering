@@ -65,10 +65,16 @@ def classify_wine():
     all_pred_classes = np.argmax(all_pred_logits, axis=1)
 
     print("\nClassification Report:")
-    print(
-        classification_report(
-            y_test, all_pred_classes, target_names=wine_data.target_names
-        )
+    report_text = classification_report(
+        y_test, all_pred_classes, target_names=wine_data.target_names
+    )
+    print(report_text)
+
+    report_dict = classification_report(
+        y_test, all_pred_classes, target_names=wine_data.target_names, output_dict=True
+    )
+    best_class = max(
+        wine_data.target_names, key=lambda name: report_dict[name]["recall"]
     )
 
     # --- Prediction ---
@@ -91,6 +97,15 @@ def classify_wine():
         print(
             f"Wine {i+1}: Predicted -> {wine_data.target_names[pred_class]} | Actual -> {wine_data.target_names[actual_class]}"
         )
+
+    # --- Short conclusion ---
+    print("\n--- Conclusion ---")
+    print(f"Accuracy: {accuracy * 100:.2f}%")
+    print(f"Best recognized class (by recall): {best_class}")
+    print(
+        "More neurons/layers can improve accuracy but may overfit; "
+        "more epochs can help until validation accuracy stops improving."
+    )
 
 
 if __name__ == "__main__":
